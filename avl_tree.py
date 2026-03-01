@@ -118,3 +118,33 @@ class AVLTree:
 
     def __contains__(self, key):
         return self.contains(key)
+
+def main():
+    tree = AVLTree()
+
+    print('Inserting movies...')
+    tree.insert('Parasite', 8.5)
+    tree.insert('Whiplash', 8.5)
+    tree.insert('Prisoners', 8.2)
+    tree.insert('The Prestige', 8.5)
+    tree.insert('Oddity', 6.7)
+
+    print(f'tree size: {tree.size}')
+    print(f'is empty: {tree.is_empty()}')
+
+    # search for a movie
+    rating = tree.search('Whiplash')
+    print(f'whiplash rating: {rating}')
+
+    # check if movie exists
+    print(f'contains "Prisoners": {tree.contains("Prisoners")}')
+    print(f'contains "Avatar": {tree.contains("Avatar")}')
+
+    # list all movies in alpha order
+    print('\nAll movies (sorted by title):')
+    for title, rating in tree.items_in_order():
+        print(f'  {title}: {rating}')
+
+
+if __name__ == '__main__':
+    main()
