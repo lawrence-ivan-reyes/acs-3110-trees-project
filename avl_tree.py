@@ -53,6 +53,13 @@ class AVLTree:
         TODO: running time: O(log n) — delegates to search"""
         return self._search(self.root, key) is not None
 
+    def delete(self, key):
+        """delete key from tree, raises KeyError if not found
+        TODO: running time: O(log n) — balanced tree height
+        TODO: memory usage: O(log n) — recursive call stack"""
+        self.root = self._delete(self.root, key)
+        self.size -= 1
+
     def items_in_order(self):
         """return list of all (key, value) pairs in ascending key order
         TODO: running time: O(n) — visits every node
@@ -142,6 +149,38 @@ class AVLTree:
 
         return self._rebalance(node)
 
+    def _min_node(self, node):
+        """return the node with the smallest key in subtree"""
+        while node.left is not None:
+            node = node.left
+        return node
+
+    def _delete(self, node, key):
+        """recursively delete key from subtree rooted at node
+        return new root of subtree after deletion"""
+        if node is None:
+            raise KeyError(key)
+
+        if key < node.key:
+            node.left = self._delete(node.left, key)
+        elif key > node.key:
+            node.right = self._delete(node.right, key)
+        else:
+            # found the node to delete
+            # case 1: no left child
+            if node.left is None:
+                return node.right
+            # case 2: no right child
+            if node.right is None:
+                return node.left
+            # case 3: two children — replace with in-order successor
+            successor = self._min_node(node.right)
+            node.key = successor.key
+            node.value = successor.value
+            node.right = self._delete(node.right, successor.key)
+
+        return self._rebalance(node)
+
     def _search(self, node, key):
         """recursively search for key in subtree rooted at node
         return node if found, None otherwise"""
@@ -181,19 +220,29 @@ def main():
     tree.insert('The Prestige', 8.5)
     tree.insert('Oddity', 6.7)
 
-    print(f'tree size: {tree.size}')
-    print(f'is empty: {tree.is_empty()}')
+    print(f'Tree size: {tree.size}')
+    print(f'Is empty: {tree.is_empty()}')
 
     # search for a movie
     rating = tree.search('Whiplash')
-    print(f'whiplash rating: {rating}')
+    print(f'Whiplash rating: {rating}')
 
     # check if movie exists
-    print(f'contains "Prisoners": {tree.contains("Prisoners")}')
-    print(f'contains "Avatar": {tree.contains("Avatar")}')
+    print(f'Contains "Prisoners": {tree.contains("Prisoners")}')
+    print(f'Contains "Avatar": {tree.contains("Avatar")}')
 
     # list all movies in alpha order
     print('\nAll movies (sorted by title):')
+    for title, rating in tree.items_in_order():
+        print(f'  {title}: {rating}')
+
+    # delete a movie
+    print('\nDeleting "Oddity"...')
+    tree.delete('Oddity')
+    print(f'Tree size: {tree.size}')
+    print(f'Contains "Oddity": {tree.contains("Oddity")}')
+
+    print('\nAll movies after deletion:')
     for title, rating in tree.items_in_order():
         print(f'  {title}: {rating}')
 
