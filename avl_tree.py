@@ -39,6 +39,28 @@ class AVLTree:
         TODO: memory usage: O(log n) — recursive call stack depth"""
         self.root = self._insert(self.root, key, value)
 
+    def search(self, key):
+        """return value for given key, or None if not found
+        TODO: running time: O(log n) — balanced tree height
+        TODO: memory usage: O(log n) — recursive call stack"""
+        node = self._search(self.root, key)
+        if node is None:
+            return None
+        return node.value
+
+    def contains(self, key):
+        """check if given key exists in tree
+        TODO: running time: O(log n) — delegates to search"""
+        return self._search(self.root, key) is not None
+
+    def items_in_order(self):
+        """return list of all (key, value) pairs in ascending key order
+        TODO: running time: O(n) — visits every node
+        TODO: memory usage: O(n) — stores all pairs in list"""
+        items = []
+        self._traverse_in_order(self.root, items)
+        return items
+
     def _height(self, node):
         """return height of node, or 0 if None"""
         if node is None:
@@ -68,9 +90,31 @@ class AVLTree:
         self._update_height(node)
         return node
 
+    def _search(self, node, key):
+        """recursively search for key in subtree rooted at node
+        return node if found, None otherwise"""
+        if node is None:
+            return None
+        if key < node.key:
+            return self._search(node.left, key)
+        elif key > node.key:
+            return self._search(node.right, key)
+        else:
+            return node
+
+    def _traverse_in_order(self, node, items):
+        """traverse subtree in-order, appending (key, value) pairs to items list"""
+        if node is not None:
+            self._traverse_in_order(node.left, items)
+            items.append((node.key, node.value))
+            self._traverse_in_order(node.right, items)
+
     def __repr__(self):
         """return string representation of this avl tree"""
         return f'AVLTree({self.size} nodes)'
 
     def __len__(self):
         return self.size
+
+    def __contains__(self, key):
+        return self.contains(key)
