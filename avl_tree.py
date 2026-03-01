@@ -71,6 +71,37 @@ class AVLTree:
         """recalculate and set height of given node"""
         node.height = 1 + max(self._height(node.left), self._height(node.right))
 
+    def _balance_factor(self, node):
+        """return balance factor of node (left height - right height)
+        avl invariant: must be -1, 0, or 1"""
+        if node is None:
+            return 0
+        return self._height(node.left) - self._height(node.right)
+
+    def _rotate_right(self, z):
+        """right rotation around z, used when left-heavy"""
+        y = z.left
+        t3 = y.right
+        # perform rotation
+        y.right = z
+        z.left = t3
+        # update heights (z first since its now lower)
+        self._update_height(z)
+        self._update_height(y)
+        return y
+
+    def _rotate_left(self, z):
+        """left rotation around z, used when right-heavy"""
+        y = z.right
+        t2 = y.left
+        # perform rotation
+        y.left = z
+        z.right = t2
+        # update heights (z first since its now lower)
+        self._update_height(z)
+        self._update_height(y)
+        return y
+
     def _insert(self, node, key, value):
         """recursively insert key-value pair into subtree rooted at node
         return new root of subtree after insertion"""
