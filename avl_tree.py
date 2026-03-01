@@ -35,7 +35,7 @@ class AVLTree:
 
     def insert(self, key, value=None):
         """insert key-value pair, update value if key already exists
-        TODO: running time: O(log n) — tree is balanced (after rotations added)
+        TODO: running time: O(log n) — balanced tree height
         TODO: memory usage: O(log n) — recursive call stack depth"""
         self.root = self._insert(self.root, key, value)
 
@@ -102,6 +102,28 @@ class AVLTree:
         self._update_height(y)
         return y
 
+    def _rebalance(self, node):
+        """check balance factor and apply rotations if needed
+        handles all 4 cases: left-left, left-right, right-right, right-left"""
+        self._update_height(node)
+        bf = self._balance_factor(node)
+
+        # left-heavy
+        if bf > 1:
+            # left-right case: rotate left child left first
+            if self._balance_factor(node.left) < 0:
+                node.left = self._rotate_left(node.left)
+            return self._rotate_right(node)
+
+        # right-heavy
+        if bf < -1:
+            # right-left case: rotate right child right first
+            if self._balance_factor(node.right) > 0:
+                node.right = self._rotate_right(node.right)
+            return self._rotate_left(node)
+
+        return node
+
     def _insert(self, node, key, value):
         """recursively insert key-value pair into subtree rooted at node
         return new root of subtree after insertion"""
@@ -118,8 +140,7 @@ class AVLTree:
             node.value = value
             return node
 
-        self._update_height(node)
-        return node
+        return self._rebalance(node)
 
     def _search(self, node, key):
         """recursively search for key in subtree rooted at node
