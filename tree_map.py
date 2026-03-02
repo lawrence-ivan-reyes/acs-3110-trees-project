@@ -28,3 +28,15 @@ class OrderedTreeMap:
         """remove a key, raises KeyError if not found
         TODO: running time: O(log n) — delegates to avl delete"""
         self._tree.delete(key)
+
+    def keys(self):
+        """return all keys in sorted order"""
+        return [k for k, v in self._tree.items_in_order()]
+
+    def values(self):
+        """return all values in key-sorted order"""
+        return [v for k, v in self._tree.items_in_order()]
+
+    def items(self):
+        """return all (key, value) pairs in sorted key order"""
+        return self._tree.items_in_order()
