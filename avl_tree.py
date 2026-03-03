@@ -200,6 +200,26 @@ class AVLTree:
             items.append((node.key, node.value))
             self._traverse_in_order(node.right, items)
 
+    def pretty_print(self):
+        """to print a visual representation of the tree structure"""
+        if self.root is None:
+            print('(empty tree)')
+            return
+        lines = []
+        self._build_display(self.root, '', True, lines)
+        print('\n'.join(lines))
+
+    def _build_display(self, node, prefix, is_last, lines):
+        """recursively build tree display lines"""
+        if node is not None:
+            connector = '└── ' if is_last else '├── '
+            lines.append(prefix + connector + str(node.key))
+            new_prefix = prefix + ('    ' if is_last else '│   ')
+            # print left first, then right
+            if node.left or node.right:
+                self._build_display(node.left, new_prefix, False, lines)
+                self._build_display(node.right, new_prefix, True, lines)
+
     def __repr__(self):
         """return string representation of this avl tree"""
         return f'AVLTree({self.size} nodes)'
@@ -230,6 +250,10 @@ def main():
     # check if movie exists
     print(f'Contains "Prisoners": {tree.contains("Prisoners")}')
     print(f'Contains "Avatar": {tree.contains("Avatar")}')
+
+    # show tree structure
+    print('\nTree structure:')
+    tree.pretty_print()
 
     # list all movies in alpha order
     print('\nAll movies (sorted by title):')
